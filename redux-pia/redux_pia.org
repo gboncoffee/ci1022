@@ -4,28 +4,48 @@
 
 ** Instruções
 
-| Opcode | Mnemônico | Tipo |
-|--------+-----------+------|
-|   0000 | brzr      | R    |
-|   0001 | ji        | I    |
-|   0010 | ld        | R    |
-|   0011 | st        | R    |
-|   0100 | addi      | I    |
-|   0101 | ldui      | I    |
-|   0110 | loop      | I    |
-|   0111 | mac       | R    |
-|   1000 | not       | R    |
-|   1001 | and       | R    |
-|   1010 | or        | R    |
-|   1011 | xor       | R    |
-|   1100 | add       | R    |
-|   1101 | sub       | R    |
-|   1110 | slr       | R    |
-|   1111 | srr       | R    |
+| Opcode | Mnemônico | Tipo | rw | ld | rwe | mwe | +pc | loop | b | func |
+|--------+-----------+------+----+----+-----+-----+-----+------+---+------|
+|   0000 | brzr      | R    | X  |  0 |   0 |   0 |   X |    0 | 1 | not  |
+|   0001 | ji        | I    | X  |  0 |   0 |   0 | +sI |    0 | 0 | X    |
+|   0010 | ld        | R    | a  |  1 |   1 |   0 |   1 |    0 | 0 | X    |
+|   0011 | st        | R    | X  |  0 |   0 |   1 |   1 |    0 | 0 | X    |
+|   0100 | addi      | I    | 0  |  0 |   1 |   0 |   1 |    0 | 0 | +    |
+|   0101 | ldui      | I    | 0  |  0 |   1 |   0 |   1 |    0 | 0 | ldui |
+|   0110 | loop      | I    | 3  |  0 |   1 |   0 |   X |    1 | 0 | -    |
+|   0111 | mac       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | *    |
+|   1000 | not       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | not  |
+|   1001 | and       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | and  |
+|   1010 | or        | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | or   |
+|   1011 | xor       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | ^    |
+|   1100 | add       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | +    |
+|   1101 | sub       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | -    |
+|   1110 | slr       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | <<   |
+|   1111 | srr       | R    | a  |  0 |   1 |   0 |   1 |    0 | 0 | >>   |
+
+*** Sinais
+
+- Tipo: Se I, a entrada ~ra~ do banco de registradores deve receber 0; ~rb~
+  deve receber 3. Se R, as entradas recebem o valor dos seus campos na
+  instrução. Se I, a entrada ~b~ da ula deve receber o imediato com sinal
+  extendido.
+- rw: Se a, a entrada ~rw~ do banco de registradores deve receber o valor do
+  campo ra da instrução. Se 0, deve receber 0. Se 3, deve receber 3.
+- ld: Se ativa, a entrada ~d~ do banco de registradores deve receber a saída
+  da memória.
+- rwe: Conectada diretamente à entrada ~we~ do banco de registradores.
+- mwe: Conectada diretamente à entrada ~mwe~ da memória.
+- +pc: Se +sI, o PC deve ser somado ao imediato com sinal. Se -uI, deve
+  ser decrementado do imediato somado à 1 sem sinal. Se 1, deve ser somado
+  à 1.
+- loop: Se ativa, a entrada ~a~ da ula deve ser -1. Caso o resultado da ula
+  seja diferente de zero, PC deve receber a subtração de si próprio pelo
+  imediato sem sinal + 1.
+- b: Se ativa e a saída da ula for diferente de 0, o PC deve ao invés da
+  soma, receber o valor da saída ~b~ do banco de registradores.
+- func: Função a ser computada na ula.
 
 *** ~loop~
 
-A instrução ~loop~ verifica o registrador ~r3~. Caso este seja zero, a
-instrução continua a execução normal do programa. Caso contrário,
-decrementa ~r3~ e salta instruções para trás de acordo com o imediato, sem
-sinal.
+A instrução decrementa o registrador ~r3~ e, caso o resultado seja diferente
+de zero, desvia o programa subtraindo o imediato sem sinal + 1 do PC.
