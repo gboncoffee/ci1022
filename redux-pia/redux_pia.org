@@ -1,0 +1,31 @@
+#+TITLE: Redux-Piá
+
+* Redux-Piá
+
+** Instruções
+
+| Opcode | Mnemônico | Tipo |
+|--------+-----------+------|
+|   0000 | brzr      | R    |
+|   0001 | ji        | I    |
+|   0010 | ld        | R    |
+|   0011 | st        | R    |
+|   0100 | addi      | I    |
+|   0101 | ldui      | I    |
+|   0110 | loop      | I    |
+|   0111 | mac       | R    |
+|   1000 | not       | R    |
+|   1001 | and       | R    |
+|   1010 | or        | R    |
+|   1011 | xor       | R    |
+|   1100 | add       | R    |
+|   1101 | sub       | R    |
+|   1110 | slr       | R    |
+|   1111 | srr       | R    |
+
+*** ~loop~
+
+A instrução ~loop~ verifica o registrador ~r3~. Caso este seja zero, a
+instrução continua a execução normal do programa. Caso contrário,
+decrementa ~r3~ e salta instruções para trás de acordo com o imediato, sem
+sinal.
