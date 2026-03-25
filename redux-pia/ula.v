@@ -1,7 +1,7 @@
 module ula(
 	   input [31:0]  a,
 	   input [31:0]  b,
-	   input [4:0]   func,
+	   input [3:0]   func,
 	   output [31:0] r
 	   );
    assign r =
