@@ -71,5 +71,12 @@ module register_bank_TB ();
       $write("    b: ");
       if (b != 69) $display("ERRO!");
       else $display("OK.");
+
+      $write("acc: ");
+      rw = 0;
+      ra = 0;
+      d = 3;
+      #10 if (a != 72) $display("ERRO!");
+      else $display("OK.");
    end
 endmodule // register_bank_TB
